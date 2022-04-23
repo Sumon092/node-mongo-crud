@@ -7,7 +7,8 @@ const port = process.env.PORT || 5000;
 
 
 //use middleware
-
+app.use(cors());
+app.use(express.json());
 
 // usre: dbuser1
 //password: vYDQRt8xhJ1PLzfc
@@ -21,9 +22,14 @@ async function run() {
     try {
         await client.connect();
         usersColloection = client.db('foodExpress').collection("user");
-        const user = { name: 'Mahiya Mahi', email: 'mahi@gmail.com' };
-        const result = await usersColloection.insertOne(user);
-        console.log(`user inserted with id: ${result.insertedId}`);
+        // const user = { name: 'Mahiya Mahi', email: 'mahi@gmail.com' };
+        // const result = await usersColloection.insertOne(user);
+        // console.log(`user inserted with id: ${result.insertedId}`);
+        app.post('/user', (req, res) => {
+            const newUser = req.body;
+            console.log('added new user', newUser);
+            res.send('user data received');
+        })
     }
     finally {
         //await client.close();
@@ -31,8 +37,7 @@ async function run() {
 }
 run().catch(console.dir);
 
-app.use(cors());
-app.use(express.json());
+
 
 app.get('/', (req, res) => {
     res.send('Running my CRUD Server');
