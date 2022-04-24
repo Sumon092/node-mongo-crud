@@ -1,11 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const { ObjectID } = require('bson');
-const objectId = require('mongodb').ObjectId;
+const ObjectId = require('mongodb').ObjectId;
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 5000;
+
 
 
 //use middleware
@@ -24,30 +25,30 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
-        usersColloection = client.db('foodExpress').collection("user");
+        userCollection = client.db('foodExpress').collection("user");
 
         //get user
         app.get('/user', async (req, res) => {
             const query = {};
-            const cursor = usersColloection.find(query);
+            const cursor = userCollection.find(query);
             const users = await cursor.toArray();
-            res.send(users)
-        })
+            res.send(users);
+        });
 
-        // post user: add a new user
+        // POST User : add a new user
         app.post('/user', async (req, res) => {
             const newUser = req.body;
-            console.log('added new user', newUser);
-            const result = await usersColloection.insertOne(newUser);
-            res.send(result);
+            console.log('adding new user', newUser);
+            const result = await userCollection.insertOne(newUser);
+            res.send(result)
         });
 
         //delete user
 
         app.delete('/user/:id', async (req, res) => {
             const id = req.params.id;
-            const query = { _id: objectId(id) };
-            const result = await usersColloection.deleteOne(query);
+            const query = { _id: ObjectId(id) };
+            const result = await userCollection.deleteOne(query);
             res.send(result);
         })
     }
